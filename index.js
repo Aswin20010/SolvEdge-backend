@@ -9,25 +9,27 @@ const { CloudinaryStorage } = require('multer-storage-cloudinary');
 const app = express();
 app.use(express.json());
 
-// Setup Cloudinary
+
+app.get("/", (req, res) => {
+  res.send("SolvEdge backend is running");
+});
+
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
   api_key:    process.env.CLOUDINARY_API_KEY,
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
-// Multer Cloudinary storage
 const storage = new CloudinaryStorage({
   cloudinary: cloudinary,
   params: {
-    folder: 'session_snapshots', // optional: Cloudinary folder name
+    folder: 'session_snapshots',
     allowed_formats: ['jpg', 'png'],
     public_id: (req, file) => `snapshot_${Date.now()}`
   }
 });
 const upload = multer({ storage });
 
-// Setup DB connection
 const pool = new Pool({
   user: process.env.DB_USER,
   host: process.env.DB_HOST,
@@ -36,7 +38,6 @@ const pool = new Pool({
   port: process.env.DB_PORT,
 });
 
-// GET /session-logs?session_id=XYZ
 app.get('/session-logs', async (req, res) => {
   const sessionId = req.query.session_id;
 
@@ -52,17 +53,22 @@ app.get('/session-logs', async (req, res) => {
   }
 });
 
-// POST /log-snapshot (form-data with optional image file)
 app.post('/log-snapshot', upload.single('snapshot'), async (req, res) => {
   try {
     const { joint, target_angle, time_taken_ms, session_id } = req.body;
     let snapshotPath = null;
 
     if (req.file && req.file.path) {
-      snapshotPath = req.file.path; // Cloudinary URL
+      snapshotPath = req.file.path; 
     }
 
-    console.log('Received:', { joint, target_angle, time_taken_ms, session_id, snapshotPath });
+    console.log('📥 Received:', {
+      joint,
+      target_angle,
+      time_taken_ms,
+      session_id,
+      snapshotPath
+    });
 
     const query = `
       INSERT INTO elbow_logs (joint, target_angle, time_taken_ms, session_id, snapshot_path)
@@ -77,8 +83,7 @@ app.post('/log-snapshot', upload.single('snapshot'), async (req, res) => {
   }
 });
 
-// Start server
-const PORT = process.env.PORT || 3065;
+const PORT = process.env.PORT || 3055;
 app.listen(PORT, '0.0.0.0', () => {
   console.log(`Server running on port ${PORT}`);
 });
