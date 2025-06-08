@@ -1,0 +1,15 @@
+# Node modules (big and unnecessary)
+node_modules/
+
+# Environment config
+.env
+
+# Logs
+logs/
+*.log
+
+# OS or IDE specific
+.DS_Store
+*.swp
+.vscode/
+.idea/
