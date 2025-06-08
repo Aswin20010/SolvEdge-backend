@@ -1,4 +1,4 @@
-# PoseTrack: Physiotherapy Pose Tracking App
+# SolvEdge App
 
 PoseTrack is an Android application that uses real-time camera input and machine learning to track elbow movement for physiotherapy exercises. The app leverages **MediaPipe Pose**, **CameraX**, and a custom **Node.js + PostgreSQL backend** to log session data with angle-specific image snapshots and time tracking.
 
